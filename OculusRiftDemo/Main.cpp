@@ -26,7 +26,7 @@ void end();
 void update();
 void setupRenderTarget(const RenderTarget& target);
 void drawScene(Matrix4f view, Matrix4f proj);
-void drawCube();
+void drawCube(float size);
 
 
 
@@ -219,57 +219,66 @@ void drawScene(Matrix4f view, Matrix4f proj)
         {
             glPushMatrix();
             glTranslatef(i * 4, i * j, j * 4);
-            drawCube();
+            drawCube(1);
             glPopMatrix();
         }
     }
+
+    for (int i = 0; i < 12; i++)
+    {
+        glPushMatrix();
+        glRotatef(ovr_GetTimeInSeconds() * 10 + i * 30, 0, 1, 0);
+        glTranslatef(0, 0, -10);
+        drawCube(0.5f);
+        glPopMatrix();
+    }
 }
 
-void drawCube()
+void drawCube(float size)
 {
     glBegin(GL_QUADS);
         glColor3f(0.8f, 0.8f, 0.8f);
 
         //Top
         glNormal3f(0, 1, 0);
-        glVertex3f(-1, 1, -1);
-        glVertex3f(-1, 1, 1);
-        glVertex3f(1, 1, 1);
-        glVertex3f(1, 1, -1);
+        glVertex3f(-size, size, -size);
+        glVertex3f(-size, size, size);
+        glVertex3f(size, size, size);
+        glVertex3f(size, size, -size);
 
         //Bottom
         glNormal3f(0, -1, 0);
-        glVertex3f(-1, -1, -1);
-        glVertex3f(-1, -1, 1);
-        glVertex3f(1, -1, 1);
-        glVertex3f(1, -1, -1);
+        glVertex3f(-size, -size, -size);
+        glVertex3f(-size, -size, size);
+        glVertex3f(size, -size, size);
+        glVertex3f(size, -size, -size);
 
         //Front
         glNormal3f(0, 0, 1);
-        glVertex3f(-1, -1, 1);
-        glVertex3f(-1, 1, 1);
-        glVertex3f(1, 1, 1);
-        glVertex3f(1, -1, 1);
+        glVertex3f(-size, -size, size);
+        glVertex3f(-size, size, size);
+        glVertex3f(size, size, size);
+        glVertex3f(size, -size, size);
 
         //Back
         glNormal3f(0, 0, -1);
-        glVertex3f(-1, -1, -1);
-        glVertex3f(-1, 1, -1);
-        glVertex3f(1, 1, -1);
-        glVertex3f(1, -1, -1);
+        glVertex3f(-size, -size, -size);
+        glVertex3f(-size, size, -size);
+        glVertex3f(size, size, -size);
+        glVertex3f(size, -size, -size);
 
         //Left
         glNormal3f(1, 0, 0);
-        glVertex3f(1, -1, -1);
-        glVertex3f(1, -1, 1);
-        glVertex3f(1, 1, 1);
-        glVertex3f(1, 1, -1);
+        glVertex3f(size, -size, -size);
+        glVertex3f(size, -size, size);
+        glVertex3f(size, size, size);
+        glVertex3f(size, size, -size);
 
         //Right
         glNormal3f(-1, 0, 0);
-        glVertex3f(-1, -1, -1);
-        glVertex3f(-1, -1, 1);
-        glVertex3f(-1, 1, 1);
-        glVertex3f(-1, 1, -1);
+        glVertex3f(-size, -size, -size);
+        glVertex3f(-size, -size, size);
+        glVertex3f(-size, size, size);
+        glVertex3f(-size, size, -size);
     glEnd();
 }
