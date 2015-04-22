@@ -64,10 +64,7 @@ void init()
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
     //Create window
-    uint32_t flags = SDL_WINDOW_OPENGL;
-    //if (!windowed) { flags |= SDL_WINDOW_FULLSCREEN; }
-    window = SDL_CreateWindow("Oculus Rift Demo",
-        0, 0, 1920, 1080, flags);
+    window = SDL_CreateWindow("Oculus Rift Demo", 0, 0, 1920, 1080, SDL_WINDOW_OPENGL);
     context = SDL_GL_CreateContext(window);
 
     //Glew
@@ -80,11 +77,10 @@ void init()
     hmd = ovrHmd_Create(0);
     if (hmd == nullptr)
     {
+        //In case the Rift isn't connected
         hmd = ovrHmd_CreateDebug(ovrHmd_DK2);
     }
     assert(hmd != nullptr);
-
-    //bool windowed = (hmd->HmdCaps & ovrHmdCap_ExtendDesktop) ? false : true;
 
     //Get the Win32 window handle (HWND) and device context (HDC)
     SDL_SysWMinfo wmInfo;
@@ -106,7 +102,7 @@ void init()
 
     ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation |
         ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, 0);
-    ovrHmd_DismissHSWDisplay(hmd);
+    ovrHmd_DismissHSWDisplay(hmd);  //Disable safety warning
 
     //Set up render targets
     for (int i = 0; i < 2; i++)
@@ -197,11 +193,9 @@ void drawScene(Matrix4f view, Matrix4f proj)
     glClearColor(0.2f, 0.2f, 0.2f, 1);
     
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     glLoadTransposeMatrixf(&proj.M[0][0]);  //OVR matrices need to be transposed for OpenGL
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     glLoadTransposeMatrixf(&view.M[0][0]);
 
     glEnable(GL_LIGHTING);
