@@ -26,6 +26,7 @@ void end();
 void update();
 void setupRenderTarget(const RenderTarget& target);
 void drawScene(Matrix4f view, Matrix4f proj);
+void drawCube();
 
 
 
@@ -194,7 +195,7 @@ void setupRenderTarget(const RenderTarget& target)
 void drawScene(Matrix4f view, Matrix4f proj)
 {
     glClearColor(0.2f, 0.2f, 0.2f, 1);
-
+    
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glLoadTransposeMatrixf(&proj.M[0][0]);  //OVR matrices need to be transposed for OpenGL
@@ -202,21 +203,73 @@ void drawScene(Matrix4f view, Matrix4f proj)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glLoadTransposeMatrixf(&view.M[0][0]);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    float diffuse[] = { 1, 1, 0.8f, 1 };
+    float ambient[] = { 0.15f, 0.15f, 0.25f, 1 };
+    float position[] = { 0.1, 0.4, 1, 0 };
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+    glLightfv(GL_LIGHT0, GL_POSITION, position);
+
     for (int i = -10; i < 10; i++)
     {
         for (int j = -10; j < 10; j++)
         {
             glPushMatrix();
             glTranslatef(i * 4, i * j, j * 4);
-            glBegin(GL_QUADS);
-                glColor3f(fabs(i / 10.0f), 0,
-                    fabs(j / 10.0f));
-                glVertex3f(-1, 0, -1);
-                glVertex3f(-1, 0, 1);
-                glVertex3f(1, 0, 1);
-                glVertex3f(1, 0, -1);
-            glEnd();
+            drawCube();
             glPopMatrix();
         }
     }
+}
+
+void drawCube()
+{
+    glBegin(GL_QUADS);
+        glColor3f(0.8f, 0.8f, 0.8f);
+
+        //Top
+        glNormal3f(0, 1, 0);
+        glVertex3f(-1, 1, -1);
+        glVertex3f(-1, 1, 1);
+        glVertex3f(1, 1, 1);
+        glVertex3f(1, 1, -1);
+
+        //Bottom
+        glNormal3f(0, -1, 0);
+        glVertex3f(-1, -1, -1);
+        glVertex3f(-1, -1, 1);
+        glVertex3f(1, -1, 1);
+        glVertex3f(1, -1, -1);
+
+        //Front
+        glNormal3f(0, 0, 1);
+        glVertex3f(-1, -1, 1);
+        glVertex3f(-1, 1, 1);
+        glVertex3f(1, 1, 1);
+        glVertex3f(1, -1, 1);
+
+        //Back
+        glNormal3f(0, 0, -1);
+        glVertex3f(-1, -1, -1);
+        glVertex3f(-1, 1, -1);
+        glVertex3f(1, 1, -1);
+        glVertex3f(1, -1, -1);
+
+        //Left
+        glNormal3f(1, 0, 0);
+        glVertex3f(1, -1, -1);
+        glVertex3f(1, -1, 1);
+        glVertex3f(1, 1, 1);
+        glVertex3f(1, 1, -1);
+
+        //Right
+        glNormal3f(-1, 0, 0);
+        glVertex3f(-1, -1, -1);
+        glVertex3f(-1, -1, 1);
+        glVertex3f(-1, 1, 1);
+        glVertex3f(-1, 1, -1);
+    glEnd();
 }
